@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Encryption App</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '../static/css/style.css' %}">
+</head>
+
+<style>
+    /* General page styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Container styling */
+.container {
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Heading styles */
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 28px;
+}
+
+h2 {
+    color: #555;
+    font-size: 22px;
+    margin: 20px 0;
+}
+
+/* Paragraph styling */
+p {
+    color: #666;
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+/* Form styling */
+.form-group {
+    margin: 15px 0;
+}
+
+textarea,
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Key display section */
+.key-section {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px dashed #007bff;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.key-section p {
+    word-break: break-all;
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+}
+
+/* Centering the container */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+</style>
+
+<body>
+    <div class="container">
+        <h1>RSA Encryption App</h1>
+
+        <!-- Error Message -->
+        {% if error_message %}
+        <div class="error-message">
+            <p style="color: red; font-weight: bold;">{{ error_message }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Step 1: Instruction to generate an RSA key pair -->
+        <h2>Step 1: Generate an RSA Key Pair</h2>
+        <p>To get started, you need to generate a new RSA key pair.</p>
+
+        <!-- Form for generating the RSA Key Pair -->
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <button type="submit" name="action" value="generate_key">Generate RSA Key Pair</button>
+            </div>
+        </form>
+
+        {% if public_key %}
+        <!-- Display keys once generated -->
+        <div class="key-section">
+            <div class="key-pair">
+                <h2>Public Key</h2>
+                <textarea class="public-key" readonly>{{ public_key }}</textarea>
+            </div>
+
+            <div class="key-pair">
+                <h2>Private Key</h2>
+                <textarea class="private-key" readonly>{{ private_key }}</textarea>
+            </div>
+        </div>
+
+        <!-- Step 2: Instruction to encrypt a message -->
+        <h2>Step 2: Encrypt a Message</h2>
+        <p>Now that you have the RSA key pair, enter a message to encrypt.</p>
+
+        <!-- Form for encrypting a message -->
+        <form method="POST">
+            {% csrf_token %}
+            <textarea name="message" required placeholder="Enter message to encrypt..."></textarea>
+            <div class="form-group">
+                <button type="submit" name="action" value="encrypt">Encrypt</button>
+            </div>
+
+            {% if encrypted %}
+            <!-- Encrypted output result -->
+            <h2>Encrypted Output</h2>
+            <textarea class="encrypted-output" readonly>{{ encrypted }}</textarea>
+            {% endif %}
+        </form>
+
+        <!-- Step 3: Instruction to decrypt the ciphertext -->
+        <h2>Step 3: Decrypt a Ciphertext</h2>
+        <p>Enter the encrypted ciphertext to decrypt it using the private key.</p>
+
+        <!-- Form for decrypting a message -->
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="ciphertext" required placeholder="Enter ciphertext to decrypt...">
+            <div class="form-group">
+                <button type="submit" name="action" value="decrypt">Decrypt</button>
+            </div>
+
+            {% if decrypted %}
+            <!-- Decrypted output result -->
+            <h2>Decrypted Output</h2>
+            <textarea class="decrypted-output" readonly>{{ decrypted }}</textarea>
+            {% endif %}
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>
